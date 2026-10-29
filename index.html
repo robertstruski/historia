@@ -1739,6 +1739,7 @@ const TASKS = [
   {id:"os", ico:"↕", n:"Oś do układania", d:"Ułóż wylosowane wydarzenia w kolejności chronologicznej."},
   {id:"fiszki", ico:"⧉", n:"Fiszki", d:"Daty i pojęcia – kliknij kartę, by ją odwrócić."},
   {id:"kto", ico:"?", n:"Z kim to się wiąże?", d:"Dopasuj wydarzenie do władcy Polski."},
+  {id:"pf", ico:"✓", n:"Prawda czy fałsz", d:"Oceń zdania o wydarzeniach – po każdej odpowiedzi krótkie wyjaśnienie."},
   {id:"zrodla", ico:"❝", n:"Analiza źródeł", d:"Fragmenty dokumentów z pytaniami jak na maturze."}
 ];
 let cur = "os";
@@ -2049,6 +2050,76 @@ function zrBind(){
   ROOT.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{ ZR.open.add(+b.dataset.a); render(); });
 }
 
+/* ---------- Prawda czy fałsz ---------- */
+const PF_DATA = [
+ ["Chrzest Mieszka I odbył się w 966 r.",1,"Tak – chrzest księcia Mieszka I w 966 r. uznaje się za początek państwa polskiego w chrześcijańskiej Europie."],
+ ["Bitwa pod Grunwaldem odbyła się w 1420 r.",0,"Fałsz – bitwa pod Grunwaldem miała miejsce 15 lipca 1410 r."],
+ ["Unia lubelska z 1569 r. utworzyła Rzeczpospolitą Obojga Narodów.",1,"Tak – unia realna Korony i Litwy zawarta na sejmie w Lublinie."],
+ ["Konstytucję 3 maja uchwalono w 1793 r.",0,"Fałsz – uchwalono ją w 1791 r. W 1793 r. odbył się sejm w Grodnie, który zatwierdził II rozbiór."],
+ ["Przywilej koszycki (1374) zwolnił szlachtę od wszystkich podatków poza jednym: 2 groszy z łanu chłopskiego.",1,"Tak – w zamian za zapewnienie tronu córkom Ludwika Węgierskiego szlachta uzyskała zwolnienie z danin, z wyjątkiem 2 groszy z łanu."],
+ ["Władysław Jagiełło został królem Polski dzięki małżeństwu z Jadwigą Andegaweńską.",1,"Tak – ślub w 1386 r., po chrzcie Jagiełły i unii w Krewie (1385)."],
+ ["Bolesław Chrobry koronował się na króla w 1025 r.",1,"Tak – koronacja tuż przed jego śmiercią."],
+ ["Śmierć Kazimierza Wielkiego w 1370 r. zakończyła rządy Piastów na tronie Królestwa Polskiego.",1,"Tak – Kazimierz nie miał prawowitego męskiego potomka, tron objął jego siostrzeniec Ludwik Węgierski."],
+ ["Pierwsza wolna elekcja odbyła się w 1573 r.",1,"Tak – po śmierci Zygmunta Augusta wybrano Henryka Walezego."],
+ ["Pierwszego liberum veto użył w 1652 r. poseł Władysław Siciński.",1,"Tak – zerwał obrady sejmu, żądając jego rozwiązania."],
+ ["Konfederacja targowicka (1792) została zawiązana w obronie Konstytucji 3 maja.",0,"Fałsz – zawiązano ją przeciw Konstytucji 3 maja, w obronie dawnego ustroju i „złotej wolności”, przy poparciu Rosji."],
+ ["III rozbiór Polski (1795) doprowadził do upadku państwa polskiego.",1,"Tak – Rzeczpospolita zniknęła z mapy Europy na 123 lata."],
+ ["Powstanie listopadowe wybuchło w 1863 r.",0,"Fałsz – listopadowe wybuchło w 1830 r., w 1863 r. wybuchło powstanie styczniowe."],
+ ["Powstanie styczniowe wybuchło w zaborze pruskim.",0,"Fałsz – wybuchło w Królestwie Polskim, czyli w zaborze rosyjskim."],
+ ["Ukaz carski z 1864 r. uwłaszczył chłopów w Królestwie Polskim.",1,"Tak – była to kara dla szlachty za powstanie i próba pozyskania chłopów dla władz rosyjskich."],
+ ["Józef Piłsudski przejął władzę w przewrocie majowym w 1926 r.",1,"Tak – w maju 1926 r. obalił rząd Wincentego Witosa i prezydenta Wojciechowskiego."],
+ ["Bitwa Warszawska, przełomowa w wojnie polsko-bolszewickiej, odbyła się w sierpniu 1920 r.",1,"Tak – 13–25 sierpnia 1920 r."],
+ ["Pakt Ribbentrop–Mołotow zawarto 1 września 1939 r.",0,"Fałsz – podpisano go 23 sierpnia 1939 r.; 1 września Niemcy napadły na Polskę."],
+ ["Polska była stroną układu monachijskiego z 1938 r.",0,"Fałsz – układ zawarły Niemcy, Włochy, Wielka Brytania i Francja; Polska w rokowaniach nie uczestniczyła."],
+ ["Konstytucja marcowa z 1921 r. wprowadzała silną władzę prezydenta.",0,"Fałsz – ustanawiała system parlamentarno-gabinetowy ze słabym prezydentem; silną władzę prezydenta dała dopiero konstytucja kwietniowa z 1935 r."],
+ ["Gabriel Narutowicz, pierwszy prezydent II RP, zginął w zamachu w 1922 r.",1,"Tak – zastrzelił go malarz Eligiusz Niewiadomski kilka dni po objęciu urzędu."],
+ ["Powstanie warszawskie wybuchło 1 sierpnia 1944 r.",1,"Tak – godzina „W” wyznaczona została na 17:00."],
+ ["W bitwie o Anglię (1940) walczył polski Dywizjon 303.",1,"Tak – był to jeden z najskuteczniejszych dywizjonów myśliwskich RAF."],
+ ["Zbrodnia katyńska została dokonana przez NKWD wiosną 1940 r.",1,"Tak – rozstrzelano ok. 22 tys. polskich jeńców i więźniów."],
+ ["Porozumienia sierpniowe w Gdańsku zostały podpisane w 1981 r.",0,"Fałsz – podpisano je w sierpniu 1980 r.; w 1981 r. wprowadzono stan wojenny (13 grudnia)."],
+ ["Obrady Okrągłego Stołu toczyły się w 1989 r.",1,"Tak – od 6 lutego do 5 kwietnia 1989 r."],
+ ["Polska przystąpiła do Unii Europejskiej w 1999 r.",0,"Fałsz – w 1999 r. weszła do NATO, a do UE w 2004 r."],
+ ["Wojna secesyjna w USA toczyła się w latach 1861–1865.",1,"Tak – zakończyła się klęską Konfederacji i zniesieniem niewolnictwa."],
+ ["Rewolucja francuska rozpoczęła się w 1789 r.",1,"Tak – symbolicznie zdobyciem Bastylii 14 lipca 1789 r."],
+ ["Kongres Wiedeński (1814–1815) utworzył Królestwo Polskie połączone unią personalną z Rosją.",1,"Tak – tzw. Królestwo Kongresowe z carem jako królem."],
+ ["Bitwa pod Adrianopolem (378 r.) zakończyła się zwycięstwem Rzymian nad Wizygotami.",0,"Fałsz – Wizygoci pokonali Rzymian, a w bitwie zginął cesarz Walens."],
+ ["Upadek Konstantynopola w 1453 r. oznaczał koniec Cesarstwa Bizantyjskiego.",1,"Tak – miasto zdobyli Turcy osmańscy pod wodzą Mehmeda II."],
+ ["Pokój westfalski (1648) zakończył wojnę trzydziestoletnią.",1,"Tak – zawarto go w Münster i Osnabrück."],
+ ["W bitwie pod Kircholmem (1605) wojska polsko-litewskie pod dowództwem Chodkiewicza pokonały Szwedów.",1,"Tak – husaria rozbiła liczniejszą armię szwedzką Karola IX."],
+ ["Odsiecz wiedeńska w 1683 r. była dziełem Jana III Sobieskiego.",1,"Tak – wojska sprzymierzone pod jego dowództwem pokonały Turków 12 września 1683 r."],
+ ["Bitwa pod Legnicą (1241) zakończyła się zwycięstwem Henryka Pobożnego nad Mongołami.",0,"Fałsz – Mongołowie zwyciężyli, a Henryk Pobożny zginął."],
+ ["Hołd pruski w 1525 r. złożył Albrecht Hohenzollern Zygmuntowi Staremu.",1,"Tak – zsekularyzował państwo krzyżackie i został lennikiem króla Polski."],
+ ["Hołd pruski złożono Zygmuntowi Augustowi.",0,"Fałsz – w 1525 r. królem był Zygmunt I Stary."],
+ ["Zjazd gnieźnieński odbył się w 1000 r. z udziałem cesarza Ottona III i Bolesława Chrobrego.",1,"Tak – utworzono wtedy metropolię gnieźnieńską."],
+ ["II pokój toruński (1466) zakończył wojnę trzynastoletnią z Krzyżakami.",1,"Tak – Polska odzyskała Pomorze Gdańskie, Chełmno i Warmię, a Zakon stał się lennikiem Polski."],
+ ["Konfederacja barska (1768) była skierowana przeciw wpływom rosyjskim i królowi Stanisławowi Augustowi.",1,"Tak – zawiązano ją w obronie wiary katolickiej i niepodległości."],
+ ["Układ Sikorski–Majski z 1941 r. przywrócił stosunki dyplomatyczne polsko-sowieckie.",1,"Tak – podpisano go po ataku Niemiec na ZSRR i umożliwił formowanie Armii Andersa."],
+ ["Wolne Miasto Gdańsk zostało utworzone na mocy traktatu wersalskiego.",1,"Tak – znalazło się pod ochroną Ligi Narodów, a Polska miała w nim szczególne prawa gospodarcze."],
+ ["Testament Bolesława Krzywoustego (1138) wprowadził zasadę jednowładztwa.",0,"Fałsz – wprowadził podział dzielnicowy i zasadę senioratu, co zapoczątkowało rozbicie dzielnicowe."]
+];
+const PF = { qs:[], i:0, picked:null, score:0, done:false };
+function pfBuild(){ PF.qs = shuffle(PF_DATA).slice(0,10); PF.i=0; PF.picked=null; PF.score=0; PF.done=false; }
+function pfHTML(){
+  const n=PF.qs.length;
+  if (PF.done) return `<div class="pane"><div class="quiz result"><div class="big">${PF.score}/${n}</div><p>${Math.round(PF.score/n*100)}% poprawnych odpowiedzi</p><button type="button" class="btn primary" id="zPfAgain">Nowa runda</button></div></div>`;
+  const [t,v,ex]=PF.qs[PF.i], p=PF.picked;
+  const ob=(val,lbl)=>{ let c="opt"; if(p!==null && val===v) c+=" ok"; else if(p===val) c+=" bad"; return `<button type="button" class="${c}" data-pf="${val}" ${p!==null?"disabled":""}>${lbl}</button>`; };
+  return `<div class="pane"><div class="quiz">
+    <div class="q-prog"><span>Zdanie ${PF.i+1} z ${n}</span><span>wynik: ${PF.score}</span></div>
+    <div class="q-bar"><i style="width:${(PF.i+(p!==null?1:0))/n*100}%"></i></div>
+    <p class="q-ask">Czy to zdanie jest prawdziwe?</p>
+    <div class="q-ev"><div class="t" style="font-size:24px">${esc(t)}</div></div>
+    <div class="opts">${ob(1,"Prawda")}${ob(0,"Fałsz")}</div>
+    ${p!==null?`<div class="explain">${p===v?"<b>Dobrze.</b> ":"<b class=\"no\">Niestety nie.</b> "}${esc(ex)}</div>
+      <button type="button" class="btn primary" id="zPfNext" style="margin-top:14px">${PF.i+1>=n?"Zobacz wynik":"Następne zdanie"}</button>`:""}
+  </div></div>`;
+}
+function pfBind(){
+  ROOT.querySelectorAll("[data-pf]").forEach(b=>b.onclick=()=>{ if(PF.picked!==null) return; PF.picked=+b.dataset.pf; if(PF.picked===PF.qs[PF.i][1]) PF.score++; render(); });
+  const nx=$("#zPfNext"); if(nx) nx.onclick=()=>{ if(PF.i+1>=PF.qs.length) PF.done=true; else {PF.i++; PF.picked=null;} render(); };
+  const ag=$("#zPfAgain"); if(ag) ag.onclick=()=>{ pfBuild(); render(); };
+}
+
 /* ---------- ramka ---------- */
 function renderList(){
   $("#zList").innerHTML = TASKS.map(t=>`<li><button type="button" class="t-btn" data-t="${t.id}" aria-current="${t.id===cur}">
@@ -2057,11 +2128,11 @@ function renderList(){
 }
 function render(){
   const t=TASKS.find(x=>x.id===cur);
-  const body = cur==="os"?osHTML():cur==="fiszki"?fcHTML():cur==="kto"?ktHTML():zrHTML();
+  const body = cur==="os"?osHTML():cur==="fiszki"?fcHTML():cur==="kto"?ktHTML():cur==="pf"?pfHTML():zrHTML();
   $("#zView").innerHTML = `<div class="hero"><button type="button" class="back" id="zBack">← Zadania</button>
     <span class="eyebrow">Zadania</span><h2>${esc(t.n)}</h2><p>${esc(t.d)}</p></div>${body}`;
   $("#zBack").onclick=()=>{ app.dataset.view="list"; scrollTo({top:0}); };
-  if(cur==="os") osBind(); else if(cur==="fiszki") fcBind(); else if(cur==="kto") ktBind(); else zrBind();
+  if(cur==="os") osBind(); else if(cur==="fiszki") fcBind(); else if(cur==="kto") ktBind(); else if(cur==="pf") pfBind(); else zrBind();
 }
 function openTask(id,user){
   cur=id; renderList(); render();
@@ -2069,7 +2140,7 @@ function openTask(id,user){
 }
 function zadaniaOwns(h){ return h==="zadania" || TASKS.some(t=>"zadania-"+t.id===h); }
 function fromHash(){ const h=location.hash.slice(1); const t=TASKS.find(t=>"zadania-"+t.id===h); if(t){ openTask(t.id); app.dataset.view="task"; } }
-osDraw(); fcBuild(); ktBuild();
+osDraw(); fcBuild(); ktBuild(); pfBuild();
 openTask("os"); fromHash();
 addEventListener("hashchange", fromHash);
 
