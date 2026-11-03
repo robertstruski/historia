@@ -676,6 +676,7 @@ body::before{ content:""; position:fixed; inset:0 0 auto; height:env(safe-area-i
 #v-zadania .fc{position:relative;min-height:260px;border:1px solid var(--line);border-radius:14px;background:var(--panel);cursor:pointer;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:30px 26px;box-shadow:0 1px 0 var(--line)}
 #v-zadania .fc .side-lbl{position:absolute;top:12px;left:16px;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 #v-zadania .fc .front{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,4.4vw,42px);line-height:1.1;text-wrap:balance}
+#v-zadania .fc .front.long{font-family:var(--f-body,inherit);font-weight:500;font-size:clamp(17px,2.2vw,21px);line-height:1.5;max-width:52ch}
 #v-zadania .fc .back-txt{font-size:18px;line-height:1.55;max-width:52ch}
 #v-zadania .fc .back-txt b{display:block;font-family:var(--f-display);font-size:28px;line-height:1.15;margin-bottom:8px;color:var(--acc)}
 #v-zadania .fc.flipped{background:color-mix(in srgb, var(--acc) 6%, var(--panel))}
@@ -2586,20 +2587,22 @@ function fcHTML(){
   const eps = (FC.kind==="daty"||FC.kind==="postaci") ? CH.map(e=>e.n) : MD.map(e=>e.name);
   const allOpt = (FC.kind==="traktaty"||FC.kind==="bitwy"||FC.kind==="postaci") ? `<option value="-1" ${FC.ep<0?"selected":""}>Wszystkie epoki</option>` : "";
   const c = FC.deck[FC.i]; let front="", back="";
+  const termLbl = {pojecia:"pojęcie",postaci:"postać",traktaty:"traktat",bitwy:"bitwa"}[FC.kind] || "hasło";
   if (c){
-    if (FC.kind!=="daty"){ front=`<div class="front">${esc(c.term)}</div>`; back=`<div class="back-txt"><b>${esc(c.term)}</b>${esc(c.def)}</div>`; }
+    if (FC.kind!=="daty" && FC.dateFirst){ front=`<div class="front long">${esc(c.def)}</div>`; back=`<div class="back-txt"><b>${esc(c.term)}</b></div>`; }
+    else if (FC.kind!=="daty"){ front=`<div class="front">${esc(c.term)}</div>`; back=`<div class="back-txt"><b>${esc(c.term)}</b>${esc(c.def)}</div>`; }
     else if (FC.dateFirst){ front=`<div class="front">${esc(c.date)}</div>`; back=`<div class="back-txt"><b>${esc(c.title)}</b>${esc(c.desc||"")}</div>`; }
     else { front=`<div class="front">${esc(c.title)}</div>`; back=`<div class="back-txt"><b>${esc(c.date)}</b>${esc(c.desc||"")}</div>`; }
   }
   return `<div class="controls">
       <div class="field"><label for="zFcKind">Rodzaj</label><select id="zFcKind"><option value="daty" ${FC.kind==="daty"?"selected":""}>Daty</option><option value="pojecia" ${FC.kind==="pojecia"?"selected":""}>Pojęcia</option><option value="postaci" ${FC.kind==="postaci"?"selected":""}>Postaci</option><option value="traktaty" ${FC.kind==="traktaty"?"selected":""}>Traktaty</option><option value="bitwy" ${FC.kind==="bitwy"?"selected":""}>Bitwy</option></select></div>
       <div class="field"><label for="zFcEp">Epoka</label><select id="zFcEp">${allOpt}${eps.map((n,i)=>`<option value="${i}" ${i===FC.ep?"selected":""}>${esc(n)}</option>`).join("")}</select></div>
-      ${FC.kind==="daty"?`<div class="field"><label for="zFcDir">Na wierzchu</label><select id="zFcDir"><option value="0" ${!FC.dateFirst?"selected":""}>wydarzenie</option><option value="1" ${FC.dateFirst?"selected":""}>data</option></select></div>`:""}
+      <div class="field"><label for="zFcDir">Na wierzchu</label><select id="zFcDir"><option value="0" ${!FC.dateFirst?"selected":""}>${FC.kind==="daty"?"wydarzenie":termLbl}</option><option value="1" ${FC.dateFirst?"selected":""}>${FC.kind==="daty"?"data":"opis"}</option></select></div>
       <button type="button" class="btn" id="zFcShuf">Przetasuj</button>
     </div>
     <div class="pane"><div class="fc-wrap">
       <div class="fc ${FC.flipped?"flipped":""}" id="zCard" role="button" tabindex="0" aria-label="Odwróć kartę">
-        <span class="side-lbl">${FC.flipped?"odpowiedź":(FC.kind==="pojecia"?"pojęcie":FC.kind==="postaci"?"postać":(FC.dateFirst?"data":"wydarzenie"))}</span>
+        <span class="side-lbl">${FC.flipped?"odpowiedź":(FC.kind==="daty"?(FC.dateFirst?"data":"wydarzenie"):(FC.dateFirst?"opis":termLbl))}</span>
         ${FC.flipped?back:front}
         <span class="tap">${FC.flipped?"kliknij, by wrócić":"kliknij, by odwrócić"}</span>
       </div>
