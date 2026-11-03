@@ -2493,7 +2493,7 @@ const TASKS = [
   {id:"tq", ico:"§", n:"Który to traktat?", d:"Rozpoznaj traktat po postanowieniach, znaczeniu lub dacie."},
   {id:"bq", ico:"⚔", n:"Znasz bitwy?", d:"Pytania o daty, strony i wyniki bitew polskich i światowych."},
   {id:"pq", ico:"Aa", n:"Co to za pojęcie?", d:"Rozpoznaj pojęcie po definicji albo wskaż epokę, do której należy."},
-  {id:"kq", ico:"☺", n:"Kim jestem?", d:"Rozpoznaj postać po opisie, funkcji lub dacie urodzenia."},
+  {id:"kq", ico:"☺", n:"Kim jestem?", d:"Rozpoznaj postać po opisie z jej biogramu."},
   {id:"zrodla", ico:"❝", n:"Analiza źródeł", d:"Fragmenty dokumentów z pytaniami jak na maturze."}
 ];
 let cur = "os";
@@ -2974,12 +2974,6 @@ function pfAuto(){
   for(const p of PP){
     const ei=PMD[p.e]; if(ei==null||!MD[ei]) continue;
     const same=PP.filter(o=>o!==p&&PMD[o.e]===ei);
-    const exact = !/ok\.|\//.test(p.life);
-    if(p.b!=null && exact){
-      const far=same.filter(o=>o.b!=null&&!/ok\.|\//.test(o.life)&&Math.abs(o.b-p.b)>=3);
-      const truth=Math.random()<.5||!far.length, yv=truth?p.b:far[Math.floor(Math.random()*far.length)].b;
-      out.push([ei,`${p.n} urodzi${fem(p)?"ła":"ł"} się w ${ppYear(yv)}${yv<0?"":" r."}`,truth?1:0,`${truth?"Tak":"Fałsz"} – ${p.n} (${p.life}), ${p.role}.`]);
-    }
     const cand=same.filter(o=>!shareWord(o.role,p.role)&&!shareWord(o.role,p.n));
     const truth2=Math.random()<.5||!cand.length, o=cand[Math.floor(Math.random()*cand.length)];
     if(truth2||o) out.push([ei,`${p.n} to ${truth2?p.role:o.role}.`,truth2?1:0,truth2?`Tak – ${p.n} (${p.life}): ${p.role}.`:`Fałsz – ${p.n} (${p.life}) to ${p.role}; opis „${o.role}” dotyczy postaci: ${o.n}.`]);
@@ -3075,12 +3069,8 @@ const KQ = mcMake({ id:"kq", filter:{label:"Epoka", def:"all", items:()=>[["all"
       const same=shuffle(PP.filter(o=>o!==p&&o.e===p.e)), rest=shuffle(PP.filter(o=>o!==p&&o.e!==p.e)), t=Math.random();
       const expl=`${p.n} (${p.life}) – ${p.role}.`;
       const exact=!/ok\.|\//.test(p.life);
-      if(t<.25 && p.b!=null && exact){
-        const ys=uniqBy([...same,...rest].filter(o=>o.b!=null&&!/ok\.|\//.test(o.life)&&Math.abs(o.b-p.b)>=3),o=>o.b).slice(0,3), opts=shuffle([p,...ys]);
-        return {ask:"W którym roku urodziła się ta osoba?", ev:p.n, big:true, cols:true, opts:opts.map(o=>ppYear(o.b)), correct:opts.indexOf(p), explain:expl};
-      }
       const opts=shuffle([p,...[...same,...rest].slice(0,3)]);
-      const ev = t<.55 ? `${maskName(p.role,p.n)}, ${p.land}. Lata życia: ${p.life}.` : maskName(p.bio[0],p.n);
+      const ev = t<.3 ? `${maskName(p.role,p.n)}, ${p.land}.` : maskName(p.bio[0],p.n);
       return {ask:"Kim jestem?", ev, big:false, opts:opts.map(o=>o.n), correct:opts.indexOf(p), explain:expl};
     });
   }});
