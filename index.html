@@ -941,9 +941,9 @@ body::before{ content:""; position:fixed; inset:0 0 auto; height:env(safe-area-i
 #v-sztuka .sec{padding:22px 28px 6px}
 #v-sztuka .sec-h{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 14px}
 #v-sztuka h3{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1.1;margin:0}
-#v-sztuka .feats{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-#v-sztuka .feat{border:1px solid var(--line);border-radius:10px;background:var(--panel);display:flex;flex-direction:column;overflow:hidden}
-#v-sztuka .feat .pic{background:var(--panel-2);border-bottom:1px solid var(--line);padding:10px 12px 4px;display:flex;justify-content:center}
+#v-sztuka .feats{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+#v-sztuka .feat{border:1px solid var(--line);border-left:4px solid var(--c, var(--art));border-radius:10px;background:var(--panel);display:flex;flex-direction:row;align-items:center;overflow:hidden}
+#v-sztuka .feat .pic{flex:none;width:120px;align-self:stretch;background:var(--panel-2);border-right:1px solid var(--line);padding:6px;display:flex;align-items:center;justify-content:center}
 #v-sztuka svg{width:100%;max-width:240px;height:auto;stroke:var(--ink);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 #v-sztuka svg .a{stroke:var(--c, var(--art))}
 #v-sztuka svg .af{fill:color-mix(in srgb, var(--c, var(--art)) 18%, transparent)}
@@ -3531,14 +3531,7 @@ const STYLES = [
  bars:{eu:[1000,1200], pl:[1030,1250]},
  intro:"Pierwszy styl wspólny dla całej łacińskiej Europy. Rozwijał się w czasach rozbicia feudalnego, potęgi zakonów (benedyktyni, reforma kluniacka) i wielkich pielgrzymek. Kościół romański przypomina twierdzę: jest masywny, zamknięty i ciemny. Rzeźba i malarstwo są podporządkowane architekturze i mają uczyć prawd wiary ludzi, którzy nie umieją czytać.",
  keys:["masywność","łuk półkolisty","grube mury","małe okna","kamień"],
- feats:[
-  {t:"Grube mury i małe okna", d:"Ciężar kamiennego sklepienia spoczywa bezpośrednio na ścianach, więc muszą być grube, a okna niewielkie. Wnętrza są przez to mroczne.", q:true},
-  {t:"Łuk półkolisty", svg:"luk_pol", d:"Zamyka okna, portale i arkady. Romanizm przejął go z architektury rzymskiej – stąd nazwa stylu."},
-  {t:"Portal uskokowy z archiwoltami", svg:"portal", d:"Wejście „wcięte” schodkowo w grubość muru; nad nim kilka koncentrycznych łuków (archiwolt), a w półkolu nad drzwiami – tympanon z płaskorzeźbą.", q:true},
-  {t:"Fryz arkadkowy", svg:"fryz", d:"Pas małych, ślepych łuczków biegnący pod gzymsem lub dachem. Jedna z najłatwiejszych do zauważenia ozdób romańskich murów.", q:true},
-  {t:"Sklepienie kolebkowe", d:"Półkoliste „tunelowe” sklepienie albo sklepienie krzyżowe bez żeber; w mniejszych kościołach strop drewniany.", q:true},
-  {t:"Rotunda", svg:"rotunda", d:"Niewielka budowla na planie koła, często z półkolistą absydą. Typowa dla najwcześniejszej architektury w Polsce i Czechach.", q:true}
- ],
+ feats:[{"t": "Grube mury, małe okna", "d": "Budowle są ciężkie i masywne, a wnętrza ciemne.", "q": true}, {"t": "Łuk półkolisty", "svg": "luk_pol", "d": "Okna, drzwi i arkady zamknięte półkolem.", "q": true}, {"t": "Kamień i skromne ozdoby", "svg": "fryz", "d": "Budowano z kamienia; ozdobą bywa np. rząd małych łuczków pod dachem.", "q": true}, {"t": "Rotunda", "svg": "rotunda", "d": "Mały, okrągły kościół – typowy dla początków państwa polskiego.", "q": true}],
  tips:[
   "Najprostszy test: łuk półkolisty + grube mury + małe okna = romanizm.",
   "W Polsce zachowało się niewiele budowli romańskich w całości – często są „ukryte” w późniejszych przebudowach.",
@@ -3559,14 +3552,7 @@ const STYLES = [
  bars:{eu:[1140,1520], pl:[1230,1520]},
  intro:"Narodził się we Francji – za jego początek uważa się przebudowę chóru opactwa Saint-Denis (ok. 1140) z inicjatywy opata Sugera. Rozwój miast i mieszczaństwa sprawił, że katedry budowano przez dziesięciolecia jako dumę całych społeczności. Światło wpadające przez witraże miało być obrazem Boga, a strzelista bryła – kierować wzrok ku niebu. W Polsce i na północy Europy dominował gotyk ceglany.",
  keys:["ostrołuk","strzelistość","witraże","przypory","cegła w Polsce"],
- feats:[
-  {t:"Ostrołuk", svg:"ostroluk", d:"Łuk zakończony szpicem. Przenosi ciężar bardziej w dół niż łuk półkolisty, dzięki czemu można budować wyżej.", q:true},
-  {t:"Przypory i łuki przyporowe", svg:"przypory", d:"Zewnętrzne filary (przypory) i przerzucone nad nawami boczne łuki przejmują nacisk sklepienia. Ściana przestaje dźwigać ciężar – może być cienka i mieć ogromne okna.", q:true},
-  {t:"Sklepienie krzyżowo-żebrowe", svg:"zebrowe", d:"Kamienne żebra tworzą szkielet, na którym opiera się lekkie wypełnienie sklepienia. Ciężar spływa żebrami na filary.", q:true},
-  {t:"Sklepienia gwiaździste i sieciowe", svg:"gwiazda", d:"Późna, bogatsza odmiana: żebra układają się w gwiazdy lub sieć. Bardzo częste w kościołach na Pomorzu i w Małopolsce.", q:true},
-  {t:"Rozeta i witraże", svg:"rozeta", d:"Wielkie, kolorowe okna wypełniają wnętrze światłem. Okrągłe okno z promienistym podziałem (rozeta) zdobi zwykle fasadę i ramiona transeptu.", q:true},
-  {t:"Wertykalizm i gotyk ceglany", d:"Wszystko kieruje się w górę: wieże, pinakle, wimpergi. W Polsce budowano głównie z cegły – formy są prostsze, a ozdobę tworzą wzory z cegły i blendy (płytkie wnęki)."}
- ],
+ feats:[{"t": "Ostrołuk", "svg": "ostroluk", "d": "Łuk zakończony szpicem.", "q": true}, {"t": "Strzelistość", "d": "Wysokie, smukłe budowle i wieże pną się w górę.", "q": true}, {"t": "Duże okna i witraże", "svg": "rozeta", "d": "Kolorowe szyby, a nad wejściem często okrągłe okno – rozeta.", "q": true}, {"t": "Cegła w Polsce", "d": "U nas kościoły, zamki i ratusze budowano zwykle z czerwonej cegły.", "q": true}],
  tips:[
   "Ostrołuk + przypory + duże okna = gotyk. Romanizm ma łuk półkolisty i małe okna.",
   "Gotyk to nie tylko kościoły: także zamki krzyżackie, ratusze, sukiennice, mury miejskie i uniwersytety (Collegium Maius).",
@@ -3590,14 +3576,7 @@ const STYLES = [
  bars:{eu:[1420,1600], pl:[1502,1630]},
  intro:"„Odrodzenie” – powrót do wzorów antyku w duchu humanizmu, który stawiał w centrum człowieka. Styl narodził się we Florencji, wspierany przez mecenasów takich jak Medyceusze i papieże. Do Polski przynieśli go włoscy artyści sprowadzeni przez Zygmunta Starego, a pierwszym wielkim dziełem była przebudowa Wawelu. Polska dodała do renesansu własny akcent: ozdobną attykę.",
  keys:["harmonia","symetria","antyk","kopuła","attyka"],
- feats:[
-  {t:"Harmonia, symetria i horyzontalizm", d:"Proporcje oparte na stałym module, a miarą wszystkiego jest człowiek. Budowla jest spokojna i „pozioma” – podzielona wyraźnymi gzymsami na kondygnacje.", q:true},
-  {t:"Porządki antyczne", svg:"porzadki", d:"Kolumny i pilastry w porządkach doryckim (toskańskim), jońskim i korynckim – często na kolejnych piętrach od najprostszego do najbogatszego."},
-  {t:"Dziedziniec arkadowy z krużgankami", svg:"arkady", d:"Kilka kondygnacji arkad na kolumnach otacza wewnętrzny dziedziniec. Wzorcowy przykład w Polsce to Wawel.", q:true},
-  {t:"Kopuła na bębnie", svg:"kopula", d:"Kopuła, często z latarnią, zwieńcza budowle na planie centralnym (koła, kwadratu, krzyża greckiego), uważanym za najdoskonalszy."},
-  {t:"Attyka", svg:"attyka", d:"Ozdobna ścianka nad gzymsem zasłaniająca dach, z grzebieniem sterczyn i ślepymi arkadkami. Tzw. attyka polska to wizytówka renesansu w Polsce.", q:true},
-  {t:"Boniowanie i bogate fasady", d:"Ściany z wyraźnie zaznaczonymi kamiennymi blokami (boniami), a fasady kamienic pokryte płaskorzeźbami, sgraffito i figurami.", q:true}
- ],
+ feats:[{"t": "Symetria i spokój", "d": "Budynek jest regularny i wyważony, podzielony poziomo na piętra.", "q": true}, {"t": "Kolumny jak w antyku", "svg": "porzadki", "d": "Wracają kolumny i wzory z Grecji i Rzymu.", "q": true}, {"t": "Dziedziniec z arkadami", "svg": "arkady", "d": "Krużganki na kolumnach wokół dziedzińca – jak na Wawelu.", "q": true}, {"t": "Attyka", "svg": "attyka", "d": "Ozdobna ścianka zasłaniająca dach – typowa dla renesansu w Polsce.", "q": true}],
  tips:[
   "Łuk półkolisty wraca, ale towarzyszą mu kolumny, symetria i lekkość – romanizm jest masywny i ciężki.",
   "Attyka na budynku w Polsce prawie zawsze oznacza renesans lub manieryzm.",
@@ -3621,14 +3600,7 @@ const STYLES = [
  bars:{eu:[1590,1760], pl:[1597,1760]},
  intro:"Styl kontrreformacji i absolutyzmu. Po soborze trydenckim Kościół chciał przyciągać wiernych sztuką, która porusza emocje i olśniewa – wzorem stał się rzymski kościół jezuitów Il Gesù. Władcy z kolei wznosili pałace jako pokaz potęgi, na czele z Wersalem Ludwika XIV. W ostatniej fazie (ok. 1730–1770) barok przeszedł w lżejsze, dekoracyjne rokoko.",
  keys:["ruch","przepych","iluzja","złoto","kontrreformacja"],
- feats:[
-  {t:"Fasada z wolutami", svg:"woluty", d:"Dwukondygnacyjna fasada: węższą górną część łączą z szerszą dolną ozdobne spływy w kształcie zwiniętej spirali (woluty). Wzór dał kościół Il Gesù.", q:true},
-  {t:"Ruch i linie krzywe", svg:"fala", d:"Ściany i fasady wyginają się wklęsło-wypukle, gzymsy łamią się i spiętrzają. Budowla ma sprawiać wrażenie dynamicznej.", q:true},
-  {t:"Iluzjonistyczne malowidła na sklepieniach", d:"Freski „otwierają” sklepienie na niebo pełne świętych i aniołów; malowana architektura przedłuża prawdziwą.", q:true},
-  {t:"Przepych dekoracji", d:"Złocenia, stiuki, marmury, rzeźby i lustra. Architektura, rzeźba i malarstwo łączą się w jedno widowisko, z silnym kontrastem światła i cienia.", q:true},
-  {t:"Kopuła z latarnią", svg:"kopula", d:"Monumentalne kopuły na wysokich bębnach dominują nad miastem i rozświetlają wnętrze."},
-  {t:"Pałac między dziedzińcem a ogrodem", svg:"palac", d:"Układ entre cour et jardin: korpus z bocznymi skrzydłami obejmuje dziedziniec honorowy, a z tyłu rozciąga się geometryczny ogród francuski.", q:true}
- ],
+ feats:[{"t": "Przepych", "d": "Złoto, marmur, rzeźby i malowidła – wnętrze ma zachwycać.", "q": true}, {"t": "Ruch i krzywe linie", "svg": "fala", "d": "Ściany i fasady falują, nic nie jest spokojne.", "q": true}, {"t": "Fasada z wolutami", "svg": "woluty", "d": "Ozdobne „ślimaki” po bokach górnej części fasady.", "q": true}, {"t": "Malowane niebo", "d": "Freski na sklepieniu udają otwarte niebo z aniołami.", "q": true}],
  tips:[
   "Barok rozpoznasz po nadmiarze: ruch, złoto, rzeźby, światło i cień. Renesans jest spokojny i wyważony.",
   "Pierwsze barokowe kościoły w Polsce fundowali jezuici (kościół św. Piotra i Pawła w Krakowie, kościół Bożego Ciała w Nieświeżu).",
@@ -3651,12 +3623,7 @@ const STYLES = [
  bars:{eu:[1750,1830], pl:[1765,1830]},
  intro:"Styl oświecenia: ład, rozum i umiar w miejsce barokowego przepychu. Fascynację antykiem rozbudziły wykopaliska w Herkulanum i Pompejach oraz pisma Johanna Joachima Winckelmanna, który w sztuce greckiej widział „szlachetną prostotę i spokojną wielkość”. W Polsce rozkwitł za Stanisława Augusta Poniatowskiego (tzw. styl Stanisława Augusta), a potem w czasach Królestwa Polskiego. Odmianą z czasów Napoleona był empire.",
  keys:["antyk","portyk","prostota","symetria","oświecenie"],
- feats:[
-  {t:"Portyk z trójkątnym frontonem", svg:"portyk", d:"Fasada wygląda jak front antycznej świątyni: rząd kolumn dźwiga belkowanie i trójkątny szczyt (fronton) z tympanonem.", q:true},
-  {t:"Prostota i gładkie ściany", d:"Mało ozdób: płaskie ściany, oszczędne płaskorzeźby, girlandy i medaliony. Liczą się czyste bryły i proporcje.", q:true},
-  {t:"Ścisłe naśladowanie antyku", svg:"porzadki", d:"Porządki kolumnowe stosowane jak w Grecji i Rzymie, kopuły wzorowane na rzymskim Panteonie, posągi i kwadrygi na szczytach.", q:true},
-  {t:"Symetria i spokój", d:"Bryła symetryczna, statyczna, bez wyginania ścian – świadome przeciwieństwo baroku."}
- ],
+ feats:[{"t": "Portyk z frontonem", "svg": "portyk", "d": "Kolumny i trójkątny szczyt jak w antycznej świątyni.", "q": true}, {"t": "Prostota", "d": "Gładkie ściany i mało ozdób.", "q": true}, {"t": "Wzorem antyk", "svg": "porzadki", "d": "Kolumny, kopuły i posągi wzorowane na Grecji i Rzymie.", "q": true}, {"t": "Symetria", "d": "Bryła spokojna i symetryczna – przeciwieństwo baroku.", "q": true}],
  tips:[
   "Portyk z kolumnami i trójkątnym frontonem to najszybszy znak klasycyzmu.",
   "Klasycyzm też korzysta z antyku jak renesans, ale ściślej go naśladuje i jest surowszy: mniej ozdób, gładkie ściany, monumentalne kolumny.",
@@ -3909,7 +3876,7 @@ function open(id, user){
   if (s) renderStyle(s); else if (id==="quiz") renderQuiz(); else { cur="przeglad"; renderList(); renderOverview(); }
   view.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>open(b.dataset.go,true));
   const back = view.querySelector(".back"); if (back) back.onclick = ()=>{ app.dataset.view="list"; scrollTo({top:0}); };
-  if (user){ app.dataset.view="ep"; scrollTo({top:0}); try{ history.replaceState(null,"","#sztuka-"+cur); }catch(e){} }
+  if (user){ app.dataset.view="ep"; scrollTo({top:0}); try{ document.scrollingElement.scrollTop=0; document.getElementById("v-sztuka").scrollIntoView({block:"start"}); scrollTo({top:0}); }catch(e){} try{ history.replaceState(null,"","#sztuka-"+cur); }catch(e){} }
 }
 const ID = h => h==="sztuka" ? "przeglad" : h.startsWith("sztuka-") ? h.slice(7) : null;
 function fromHash(){ const id = ID(location.hash.slice(1)); if (id){ open(id); app.dataset.view = id==="przeglad" ? app.dataset.view : "ep"; return true; } return false; }
