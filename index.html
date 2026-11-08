@@ -1953,6 +1953,8 @@ const DYN = [
  {k:"elek",n:"Królowie elekcyjni",m:"E",y:"1573 – 1795",d:"Po śmierci Zygmunta Augusta w 1572 r. szlachta wybierała króla w wolnej elekcji. Tron nie był już dziedziczny – od Henryka Walezego po Stanisława Augusta Poniatowskiego."}
 ];
 // t: k = król, d = książę; g: grupa w obrębie dynastii
+// najważniejsze wydarzenie w życiu władcy (indeks w ev) – wyróżnione na osi
+const KEYEV = {"mieszko-i": 1, "boleslaw-chrobry": 3, "mieszko-ii": 0, "kazimierz-odnowiciel": 1, "boleslaw-smialy": 3, "wladyslaw-herman": 2, "boleslaw-krzywousty": 4, "rozbicie-dzielnicowe": 0, "przemysl-ii": 1, "wladyslaw-lokietek": 3, "kazimierz-wielki": 3, "waclaw-ii": 1, "ludwik-wegierski": 1, "jadwiga": 1, "wladyslaw-jagiello": 2, "wladyslaw-warnenczyk": 2, "kazimierz-jagiellonczyk": 2, "jan-olbracht": 1, "aleksander": 1, "zygmunt-stary": 1, "zygmunt-august": 2, "zygmunt-iii": 3, "wladyslaw-iv": 0, "jan-kazimierz": 0, "august-ii": 0, "august-iii": 0, "henryk-walezy": 0, "stefan-batory": 2, "michal-wisniowiecki": 1, "jan-sobieski": 2, "stanislaw-leszczynski": 0, "stanislaw-august": 3};
 const R = [
 {id:"mieszko-i",n:"Mieszko I",d:"piast",g:"Monarchia wczesnopiastowska",t:"d",r:[[960,992]],life:"ok. 940 – 25 V 992",
  bio:"Pierwszy historyczny władca Polan i twórca państwa polskiego. Zjednoczył ziemie Wielkopolski, Mazowsza, Pomorza, Śląska i Małopolski. Przyjmując chrzest w obrządku łacińskim, wprowadził państwo do kręgu kultury zachodniej i uniezależnił się od pośrednictwa niemieckiego Kościoła.",
@@ -2342,9 +2344,10 @@ function renderBio(){
   const segs = r.r.map(([a,b])=>`<span class="lb-seg" style="left:${pct(a)}%;width:${Math.max(1.5,pct(b)-pct(a))}%"></span>`).join("");
   const age = r.r[0][0]-r.b, len = reignLen(r);
   const reignStarts = new Set(r.r.map(x=>x[0]));
-  const items = [[r.b,`Narodziny`, "life"], ...r.ev.map(([y,t])=>[y,t, reignStarts.has(y)?"reign-ev":""]), [r.dd,"Śmierć","life"]];
+  const kIdx = KEYEV[r.id] ?? -1;
+  const items = [[r.b,`Narodziny`, "life"], ...r.ev.map(([y,t],k)=>[y,t, k===kIdx?"reign-ev":""]), [r.dd,"Śmierć","life"]];
   // jeśli objęcie tronu nie ma własnego wydarzenia – dodaj
-  r.r.forEach(([a],k)=>{ if(!r.ev.some(e=>e[0]===a)) items.push([a, k?"Ponowne objęcie tronu":"Objęcie władzy","reign-ev"]); });
+  r.r.forEach(([a],k)=>{ if(!r.ev.some(e=>e[0]===a)) items.push([a, k?"Ponowne objęcie tronu":"Objęcie władzy",""]); });
   items.sort((a,b)=>a[0]-b[0] || (a[2]==="life" && a[1]==="Śmierć" ? 1 : b[2]==="life" && b[1]==="Śmierć" ? -1 : 0));
   const col = $("#colBio");
   col.style.setProperty("--c", `var(--${d.k})`);
@@ -4142,7 +4145,7 @@ document.querySelectorAll(".wd-nav [data-wd]").forEach(b => b.onclick = () => {
     scrollTo({ top: 0 });
   });
   show("start"); route();
-  document.querySelectorAll("[data-go]").forEach(c => c.onclick = () => { show(c.dataset.go); scrollTo({ top: 0 }); });
+  document.querySelectorAll("[data-go]").forEach(c => { if (!document.getElementById("v-" + c.dataset.go)) return; c.onclick = () => { show(c.dataset.go); scrollTo({ top: 0 }); }; });
   (function stats(){
     const set = (k, t) => { const el = document.querySelector('[data-stat="' + k + '"]'); if (el) el.textContent = t; };
     try {
