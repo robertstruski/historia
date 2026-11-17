@@ -3879,7 +3879,11 @@ function osExpand(list){
     if (Math.abs(z-a) <= 2 && !war){ out.push([x[0], x[1], x[2], x[3], fmt(a)]); continue; }
     if (!war && (!OS_GOOD.test(x[2]) || /przemysłow|encyklopedi/i.test(x[2]))) continue;
     const pick = Math.random()<0.5 ? ["Początek", a] : ["Koniec", z];
-    out.push([pick[1], x[1], pick[0]+": "+x[2], x[3], fmt(pick[1]), x[2]]);
+    const NM = {"Wojna z Turcją":"wojna z Turcją (Cecora i Chocim)","Wojny z Turcją":"wojny z Turcją (od Kamieńca Podolskiego do Karłowic)","Wojny ze Szwecją":"wojny ze Szwecją o Inflanty (za Zygmunta III Wazy)","Wojna z Moskwą":"wojna z Moskwą (okres wielkiej smuty)","Wojna z Rosją":"wojna z Rosją o Ukrainę i Smoleńsk (po powstaniu Chmielnickiego)","Wojny polsko-niemieckie":"wojny Bolesława Chrobrego z Henrykiem II","Powstania śląskie":"powstania śląskie (trzy powstania)","Wojna polsko-ukraińska":"wojna polsko-ukraińska o Lwów i Galicję Wschodnią"};
+    let lab = NM[x[2]] || x[2];
+    if (!NM[x[2]] && /^(wojny|powstania|rewolucje)\s/i.test(x[2])) lab = x[2]+" ("+fmt(a).replace(" p.n.e.","")+"–"+fmt(z)+")";
+    lab = lab.charAt(0).toUpperCase()+lab.slice(1);
+    out.push([pick[1], x[1], pick[0]+": "+lab, x[3], fmt(pick[1]), x[2]]);
   }
   return out;
 }
