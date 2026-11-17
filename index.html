@@ -5399,7 +5399,7 @@ const norm=w=>w.toLocaleUpperCase("pl").replace(/[^A-ZĄĆĘŁŃÓŚŹŻ ]/g,"")
 const first=s=>String(s||"").split(/(?<=[^\s.]{4,}\.)\s+(?=\p{Lu})/u)[0];
 const clueOf=o=>{ if(!o.b) return cap(o.d); const b=mask(first(o.b),o.n), lw=String(o.d||"").toLowerCase().split(/[^\p{L}]+/u).filter(w=>w.length>=5);
   if(!o.d||lw.some(w=>b.toLowerCase().includes(w.slice(0,5)))) return cap(b); return cap(o.d)+" – "+b.charAt(0).toLowerCase()+b.slice(1); };
-const surname=n=>{ const tk=String(n).replace(/[„”"()]/g,"").split(/\s+/); const last=tk[tk.length-1]; if(/^[IVXLC]+\.?$/.test(last)) return tk.length===2&&tk[0].length>=4?tk[0]:null; const s=last.replace(/[^\p{L}-]/gu,""); return s.length>=4&&!s.includes("-")?s:null; };
+const surname=n=>{ const tk=String(n).replace(/[„”"()]/g,"").split(/\s+/); const last=tk[tk.length-1]; if(/^(wielk|świętej?|święty|śmiał|chrobr|krzywoust|łokiet|mądr|stary|starsz|młodsz|sprawiedliw|groźn|okrutn|zdobywc|oświecon|dobr|pobożn|tolerancyjn|serce|młot|d.?arc|lwiego|lwie|cesarz|król|prezydent|książę|papież)/i.test(last)) return null; if(/^[IVXLC]+\.?$/.test(last)) return tk.length===2&&tk[0].length>=4?tk[0]:null; const s=last.replace(/[^\p{L}-]/gu,""); return s.length>=4&&!s.includes("-")?s:null; };
 
 function txData(t){
   const Q=[], poj=t.poj||[], os=t.os||[], q=t.q||{};
