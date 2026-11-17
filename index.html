@@ -3867,10 +3867,26 @@ let cur = "os";
 
 /* ---------- Oś do układania ---------- */
 const OS = { ep: 2, set: "ch", side: "all", items: [], checked: false, fallback: false };
+const OS_GOOD = /^(wojn|powstani|rewoluc|panowani|rokosz|konfederac|sejm czteroletni|sobór|krucjat|pierwsza krucjata|rozbicie|czarna śmierć|wielka schizma|spór|wiosna ludów|zjednoczenie|stan wojenny|blokada|potop|deportacj|autonomia|kulturkampf|księstwo|dyktatura|ekspansja|kryzys|wielki kryzys|wielki terror|kongres|ententa|zjazd|reformy|odbudowa)/i;
+function osExpand(list){
+  const out = [];
+  for (const x of list){
+    const m = String(x[4]||"").match(/(\d{2,4})\s*[–-]\s*(\d{2,4})(?!\d)/);
+    if (!m){ out.push(x); continue; }
+    const bc = /p\.\s?n\.\s?e/.test(x[4]), a = bc ? -m[1] : +m[1], z = bc ? -m[2] : +m[2];
+    const fmt = y => y<0 ? `${-y} p.n.e.` : `${y}`;
+    const war = /^(wojn|powstani|rewoluc|bitwa|konfederac|rokosz)/i.test(x[2]);
+    if (Math.abs(z-a) <= 2 && !war){ out.push([x[0], x[1], x[2], x[3], fmt(a)]); continue; }
+    if (!war && (!OS_GOOD.test(x[2]) || /przemysłow|encyklopedi/i.test(x[2]))) continue;
+    const pick = Math.random()<0.5 ? ["Początek", a] : ["Koniec", z];
+    out.push([pick[1], x[1], pick[0]+": "+x[2], x[3], fmt(pick[1]), x[2]]);
+  }
+  return out;
+}
 function osDraw(){
   const e = CH[OS.ep]; if (!e) return;
   let pool; OS.fallback = false;
-  if (OS.set==="ch") pool = e.ev.filter(x => OS.side==="all" || x[1]===OS.side);
+  if (OS.set==="ch") pool = osExpand(e.ev.filter(x => OS.side==="all" || x[1]===OS.side));
   else {
     const all = katEvents(OS.set).filter(x => OS.side==="all" || x[1]===OS.side);
     pool = all.filter(x => chIdx(x[0])===OS.ep);
@@ -5510,12 +5526,14 @@ function txTabs(t){
   /* --- Gry --- */
   const words=()=>{ const out=[], seen=new Set();
     (t.poj||[]).forEach(p=>{ const w=norm(p.t); if(w.replace(/ /g,"").length>=3&&!seen.has(w)){ seen.add(w); out.push({w,clue:mask(p.d,p.t),src:p.t}); } });
-    (t.os||[]).forEach(o=>{ const isR=o.h&&!String(o.h).startsWith("postac-"), tk=String(o.n).split(/\s+/); if(isR&&!(tk.length===2&&/^[IVX]+$/.test(tk[1]))) return; const s=surname(o.n); if(!s||!o.b) return; const w=norm(s); if(!seen.has(w)){ seen.add(w); out.push({w,clue:clueOf(o),src:o.n}); } });
-    (t.kr||[]).forEach(([h,c])=>{ const w=norm(h); if(w.includes(" ")||w.length<3||seen.has(w)) return; seen.add(w); out.push({w,clue:c,src:h}); });
+    (t.os||[]).forEach(o=>{ const isR=o.h&&!String(o.h).startsWith("postac-"), tk=String(o.n).split(/\s+/); if(isR&&!(tk.length===2&&/^[IVX]+$/.test(tk[1]))) return; const s=/^(Mao|Deng|Kim|Czang|Sun)\s/.test(o.n)?tk[0]:surname(o.n); if(!s||!o.b) return; const w=norm(s); if(!seen.has(w)){ seen.add(w); out.push({w,clue:clueOf(o),src:o.n}); } });
+    (t.kr||[]).forEach(([h,c])=>{ const w=norm(h); if(w.includes(" ")||w.length<3||seen.has(w)) return; if((t.os||[]).some(o=>String(o.n).split(/\s+/).some(x=>norm(x)===w))) return; seen.add(w); out.push({w,clue:c,src:h}); });
     const PREP=/^(pod|nad|w|we|z|ze|do|na|o|od|po|przy|przez|za|dla|u|ku|nie|ok|tak|jako|bo|by|że|przeciw|dzięki|m)$/i;
     ((t.q&&t.q.abcd)||[]).forEach(([ask,c,,,,ex])=>{ const tk=String(c).split(" "); if(tk.length>2||!/^[\p{L} ]+$/u.test(c)||PREP.test(tk[0])) return;
-      const w=norm(c); const n=w.replace(/ /g,"").length; if(n<4||n>16||seen.has(w)) return; seen.add(w); out.push({w,clue:ask,src:c.charAt(0).toUpperCase()+c.slice(1)}); });
-    return out; };
+      const w=norm(c); const n=w.replace(/ /g,"").length; if(n<4||n>16||seen.has(w)) return; if((t.os||[]).some(o=>String(o.n).split(/\s+/).some(x=>norm(x)===w))) return; seen.add(w); out.push({w,clue:ask,src:c.charAt(0).toUpperCase()+c.slice(1)}); });
+    const same=(a,b)=>{ const x=a.length<=b.length?a:b, y=x===a?b:a; let k=0; while(k<x.length&&x[k]===y[k]) k++; return k>=Math.max(5,x.length-2)&&(y.length-k<=2||/(AMI|OWIE|ACH|OM)$/.test(y)&&k>=x.length-2); };
+    const ded=[]; for(const o of out){ if(ded.some(d=>!d.w.includes(" ")&&!o.w.includes(" ")&&same(d.w,o.w))) continue; ded.push(o); }
+    return ded; };
   function gHub(){ const ws=words(), single=ws.filter(x=>!x.w.includes(" ")&&x.w.length>=3&&x.w.length<=15);
     const G=[["kr","✏️","Krzyżówka","Hasła z tego tematu",single.length>=3],["wy","🔍","Wykreślanka","Znajdź ukryte hasła",single.length>=3],["zg","❤️","Zgadnij pojęcie","Litera po literze",ws.length>=1],["ro","🔀","Rozsypanka","Ułóż hasło z liter",ws.length>=1]];
     P("g").innerHTML=`<div class="tmx-grid">${G.map(([k,ic,n,d,ok])=>`<button type="button" class="tmx-card" data-g="${k}" ${ok?"":"disabled"}><span class="ic">${ic}</span><span><b>${n}</b><small>${ok?d:"Za mało haseł w tym temacie"}</small></span></button>`).join("")}</div>`;
