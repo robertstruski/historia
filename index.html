@@ -5415,7 +5415,8 @@ function txData(t){
   const ord=[], seenO=new Set();
   const RM={I:1,II:2,III:3,IV:4,V:5,VI:6,VII:7,VIII:8,IX:9,X:10,XI:11,XII:12};
   const rc=x=>{ let n=0,pv=0; for(const ch of x.split("").reverse()){ const v={I:1,V:5,X:10,L:50,C:100}[ch]||0; n+=v<pv?-v:v; pv=Math.max(pv,v);} return n; };
-  const pk=(ds,lab)=>{ const bc=/p\.\s?n\.\s?e/.test(ds); const ys=[...ds.matchAll(/(\d{1,4})(?!\s*w\.)/g)].map(m=>+m[1]).filter(y=>bc?y>0:y>=100);
+  const BAD=/budow|rozkwit|rządy |panowanie|szczyt kryzysu|największe rozszerzenie|kryzys migracyjny|początek produkcji|przebudow|kolektywizacj|początek gotyku|złoty wiek|realizacji planu|pięcioletni|hiperinflacj|manifestacje patriotyczne|pierwszy tom|zmiany w konstytucji|magistrali|ukształtowanie się|referendum ludowe|zamach stanu Napoleona/i, WAR=/wojn|powstani|rewolucj|oblężeni|okupacj|bitwa o |kampani|interwencj|blokad/i;
+  const pk=(ds,lab)=>{ if(BAD.test(lab)) return null; const bc=/p\.\s?n\.\s?e/.test(ds); const ys=[...ds.matchAll(/(\d{1,4})(?!\s*w\.)/g)].map(m=>+m[1]).filter(y=>bc?y>0:y>=100);
     const sg=y=>bc?-y:y;
     if(!ys.length){ const c=ds.match(/\b([IVXL]+)\s*w\./); if(!c) return null; const v=sg((rc(c[1])-1)*100+50); return [{k:v,fz:1,sh:ds,l:lab}]; }
     const mo=ds.match(/\b(XII|XI|X|IX|VIII|VII|VI|V|IV|III|II|I)\b(?=\s*[–-]?\s*\d{3,4})/), m=mo?RM[mo[1]]:6, dy=(ds.match(/^(\d{1,2})\s+[IVX]/)||[])[1];
@@ -5424,6 +5425,7 @@ function txData(t){
     if(ys.length>=2 && /[–-]/.test(ds) && Math.abs(ys[1]-ys[0])>=1){ const a=ys[0], z=ys[ys.length-1];
       if(/^(wybuch|początek|rozpoczęcie)/i.test(lab)) return [{k:one(a),sh:String(a)+(bc?" p.n.e.":""),l:lab,fz}];
       if(/^(koniec|zakończenie)/i.test(lab)) return [{k:one(z),sh:String(z)+(bc?" p.n.e.":""),l:lab,fz}];
+      if(!WAR.test(lab)) return null;
       return [{k:sg(a)+0.5/12,sh:String(a)+(bc?" p.n.e.":""),l:lab+" (początek)",fz},{k:sg(z)+11.5/12,sh:String(z)+(bc?" p.n.e.":""),l:lab+" (koniec)",fz}]; }
     return [{k:one(ys[0]),sh:ds,l:lab,fz,mo:!!mo}]; };
   const prep=(d,src)=>d.flatMap(x=>{ const v=pk(String(x[0]),String(x[1])); return v?[shuf(v)[0]].map(o=>({...o,src})):[]; });
