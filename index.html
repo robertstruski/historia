@@ -5743,7 +5743,10 @@ function txTabs(t){
     el.querySelector('[data-a="hl"]').onclick=()=>{ if(!need()) return; const x=PW[cur].map(k=>cell(...k.split(","))).find(x=>x.value!==x.dataset.v); if(!x){ msg("To hasło jest już poprawnie wpisane."); return; } fill(x); msg(""); };
     el.querySelector('[data-a="hw"]').onclick=()=>{ if(!need()) return; PW[cur].forEach(k=>{ const x=cell(...k.split(",")); if(x.value!==x.dataset.v) fill(x); }); msg(""); };
     inp.forEach(x=>{ x.onfocus=()=>{ const [r,c]=x.dataset.rc.split(",").map(Number); if(!cell(r,c+1)&&!cell(r,c-1)) dir=[1,0]; else if(!cell(r+1,c)&&!cell(r-1,c)) dir=[0,1]; pick(x.dataset.rc); };
-      x.oninput=()=>{ x.value=x.value.toLocaleUpperCase("pl").slice(-1); x.classList.remove("bad","good"); const [r,c]=x.dataset.rc.split(",").map(Number); const nx=cell(r+dir[0],c+dir[1]); if(x.value&&nx) nx.focus(); };
+      x.oninput=()=>{ x.value=x.value.toLocaleUpperCase("pl").slice(-1); x.classList.remove("bad","good"); const [r,c]=x.dataset.rc.split(",").map(Number); if(!x.value) return; const w=(cur>=0&&PW[cur].includes(x.dataset.rc))?PW[cur]:null; let nx=null;
+        if(w){ const i=w.indexOf(x.dataset.rc); const k=w.slice(i+1).find(q=>!cell(...q.split(",")).value); if(k) nx=cell(...k.split(",")); }
+        else { let rr=r+dir[0], cc=c+dir[1], q; while((q=cell(rr,cc))&&q.value){ rr+=dir[0]; cc+=dir[1]; } nx=q; }
+        if(nx) nx.focus(); };
       x.onkeydown=e=>{ if(e.key==="Backspace"&&!x.value){ const [r,c]=x.dataset.rc.split(",").map(Number); const pv=cell(r-dir[0],c-dir[1]); if(pv){ pv.focus(); pv.value=""; e.preventDefault(); } } };
       x.onclick=()=>{ const [r,c]=x.dataset.rc.split(",").map(Number); if(cell(r,c+1)||cell(r,c-1)) if(cell(r+1,c)||cell(r-1,c)) dir=dir[0]?[0,1]:[1,0]; pick(x.dataset.rc); }; });
     el.querySelector('[data-a="chk"]').onclick=()=>{ let bad=0,empty=0; inp.forEach(x=>{ if(!x.value){ empty++; return; } const ok=x.value===x.dataset.v; x.classList.toggle("bad",!ok); x.classList.toggle("good",ok); if(!ok) bad++; }); el.querySelector(".tmx-msg:not(.km)").textContent=!bad&&!empty?"Brawo! Krzyżówka rozwiązana.":`Błędne litery: ${bad}, puste pola: ${empty}.`; };
